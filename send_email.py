@@ -6,8 +6,8 @@ from email.mime.multipart import MIMEMultipart
 def send(email, nombre, fecha, hora, corte):
     
     #credenciales
-    user = st.secrets["smtp_user"]
-    password = st.secrets["smtp_pass"]
+    user = st.secrets["emails"]["smtp_user"]
+    password = st.secrets["emails"]["smtp_pass"]
     
     sender_email = "JCA Barber Shop"
     #Config del server

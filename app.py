@@ -2,7 +2,11 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from PIL import Image
 import re
+import uuid
+from google_sheet import GoogleSheet
+
 from send_email import send
+
 
 api_whatsapp= "https://api.whatsapp.com/send?phone=34667963510&text=YOUR_TEXT"
 # VARIABLES
@@ -11,9 +15,14 @@ page_title = "JCA Barber"
 page_icon = "💈"
 layout = "centered"
 horas =["9:00","10:00","11:00"]
-corte = ["Corte: 10€", "Corte + barba: 12€", "Corte + lavado: 15€"]
+
+corte = ["Corte - 10€", "Corte + barba - 15€", "Corte + lavado - 16€"]
 image = "assets/pel.jpeg"
 image_maps =  Image.open("assets/maps.png")
+
+document = "gestion_barber"
+sheet = "reservas"
+credentials = st.secrets["sheets"]["credentials_sheet"]
 
 # Funcion con re
 def validate_email(email):
@@ -23,6 +32,9 @@ def validate_email(email):
     else:
         return False
 
+
+def generate_uuid():
+    return str(uuid.uuid4())
 
 st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
 
@@ -91,21 +103,28 @@ if selected == "Servicios":
     
     # Back
     if enviar:
-        if nombre == "":
-            st.warning("El campo nombre es obligatorio")
-        elif email == "":
-            st.warning("El campo email es obligatorio")
-    
-        elif not validate_email(email):
-            st.warning("El email no es valido")
         
-        else:
+        with st.spinner("Cargando...."):
+            if nombre == "":
+                st.warning("El campo nombre es obligatorio")
+            elif email == "":
+                st.warning("El campo email es obligatorio")
+    
+            elif not validate_email(email):
+                st.warning("El email no es valido")
+        
+            else:
             
-            #Crear evento en google calendar
-            # Crear registo en google sheet
-            # Enviar email de confirmacion al usuario
-            send(email, nombre, fecha, hora, tipo_corte)
+                #Crear evento en google calendar
+                # Crear registo en google sheet
+                uid = generate_uuid()
+                data = [[nombre, email, tipo_corte, str(fecha), hora, notas,uid]]
+                gs = GoogleSheet(credentials, document, sheet)
+                range = gs.get_last_row_range()
+                gs.write_data(range, data)
+                # Enviar email de confirmacion al usuario
+                #send(email, nombre, fecha, hora, tipo_corte)
             
-            st.success("Su cita ha sido reservada de forma exitosa.")
+                st.success("Su cita ha sido reservada de forma exitosa.")
             
             
