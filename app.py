@@ -1,7 +1,8 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from PIL import Image
-import urllib.parse
+import re
+from send_email import send
 
 api_whatsapp= "https://api.whatsapp.com/send?phone=34667963510&text=YOUR_TEXT"
 # VARIABLES
@@ -14,6 +15,15 @@ corte = ["Corte: 10€", "Corte + barba: 12€", "Corte + lavado: 15€"]
 image = "assets/pel.jpeg"
 image_maps =  Image.open("assets/maps.png")
 
+# Funcion con re
+def validate_email(email):
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    if re.match(pattern, email):
+        return True
+    else:
+        return False
+
+
 st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
 
 st.image(image)
@@ -25,8 +35,10 @@ selected = option_menu(menu_title=None, options=["Servicios", "Diseños", "Detal
 
 if selected == "Detalles":
     
-    st.image("assets/maps.png")
-    st.markdown("Pulsa [aqui](https://www.google.com/maps/place/Jose+Carlos+Barber+Shop/@38.2990953,-5.265578,17z/data=!3m1!4b1!4m6!3m5!1s0xd13444518f19131:0x2231cd8dd82df493!8m2!3d38.2990953!4d-5.265578!16s%2Fg%2F11clym3zq7?entry=ttu) para ver la dirección")
+    
+    st.subheader("Ubicación")
+    st.markdown("""<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3131.1540052457226!2d-5.2681529236768165!3d38.29909948178364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd13444518f19131%3A0x2231cd8dd82df493!2sJose%20Carlos%20Barber%20Shop!5e0!3m2!1ses!2ses!4v1716884259741!5m2!1ses!2ses" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>""", unsafe_allow_html=True)
+    
     
     st.subheader("Horarios")
     dia, hora = st.columns(2)
@@ -83,12 +95,16 @@ if selected == "Servicios":
             st.warning("El campo nombre es obligatorio")
         elif email == "":
             st.warning("El campo email es obligatorio")
-            
+    
+        elif not validate_email(email):
+            st.warning("El email no es valido")
+        
         else:
             
             #Crear evento en google calendar
             # Crear registo en google sheet
             # Enviar email de confirmacion al usuario
+            send(email, nombre, fecha, hora, tipo_corte)
             
             st.success("Su cita ha sido reservada de forma exitosa.")
             
