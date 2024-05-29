@@ -79,9 +79,9 @@ if selected == "Detalles":
     
     st.subheader("Contacto")
     st.text("📞 662014283")
-    phone_number = "34667963510"
-    whatsapp_url = f"https://wa.me/{phone_number}"
-    st.markdown(f"[Contactar por WhatsApp]({whatsapp_url})")
+    # phone_number = "34667963510"
+    # whatsapp_url = f"https://wa.me/{phone_number}"
+    # st.markdown(f"[Contactar por WhatsApp]({whatsapp_url})")
     
     st.subheader("Instagram")
     st.markdown("Siguenos [aqui](https://www.instagram.com/jca_barbershop/) en instagram")
