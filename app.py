@@ -17,7 +17,7 @@ api_whatsapp= "https://api.whatsapp.com/send?phone=34667963510&text=YOUR_TEXT"
 page_title = "JCA Barber"
 page_icon = "💈"
 layout = "centered"
-horas =["9:00","10:00","11:00"]
+horas =["09:00","09:45","10:30","11:15","12:00","12:45","13:30","14:00","17:30","18:15","19:00","19:45"]
 
 corte = ["Corte - 10€", "Corte + barba - 15€", "Corte + lavado - 16€"]
 image = "assets/pel.jpeg"
@@ -43,7 +43,7 @@ def generate_uuid():
 
 def add_hour_and_half(time):
     parsed_time = dt.datetime.strptime(time, "%H:%M").time()
-    new_time = (dt.datetime.combine(dt.date.today(), parsed_time) + dt.timedelta(hours=1, minutes=30)).time()
+    new_time = (dt.datetime.combine(dt.date.today(), parsed_time) + dt.timedelta(hours=0, minutes=45)).time()
     return new_time.strftime("%H:%M")
 
 st.set_page_config(page_title=page_title, page_icon=page_icon, layout=layout)
@@ -133,10 +133,10 @@ if selected == "Servicios":
                 parsed_time2 = dt.datetime.strptime(end_hours, "%H:%M").time()
                 hours2 = parsed_time2.hour
                 minutes2 = parsed_time2.minute
-                start_time = dt.datetime(fecha.year, fecha.month, fecha.day, hours1, minutes1).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
-                end_time = dt.datetime(fecha.year, fecha.month, fecha.day, hours2, minutes2).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
+                start_time = dt.datetime(fecha.year, fecha.month, fecha.day, hours1+2, minutes1).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
+                end_time = dt.datetime(fecha.year, fecha.month, fecha.day, hours2+2, minutes2).astimezone(dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
                 calendar = GoogleCalendar(credentials, idcalendar)
-                calendar.create_event(nombre, start_time, end_time, time_zone)
+                calendar.create_event(nombre,start_time, end_time, time_zone)
                 # Crear registo en google sheet
                 uid = generate_uuid()
                 data = [[nombre, email, tipo_corte, str(fecha), hora, notas,uid]]
